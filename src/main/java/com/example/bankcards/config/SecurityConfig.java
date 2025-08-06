@@ -31,7 +31,11 @@ public class SecurityConfig {
     @Autowired
     private UserDetailsService userDetailsService;
 
-    private static final String[] WHITE_LIST_URL = { "/api/auth/register", "/api/auth/login" }; // Добавьте /api/auth/login в белый список
+    private static final String[] WHITE_LIST_URL = { "/api/auth/register", "/api/auth/login",
+            "/swagger-ui/**",
+            "/api-docs/**",
+
+            "/swagger-ui.html" }; // Добавьте /api/auth/login в белый список
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
