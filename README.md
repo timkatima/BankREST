@@ -130,8 +130,6 @@ Docker Compose:
 expiration: 86400000 # 24 часа
 
 
-
-
 Предупреждения Maven:
 
 Если возникают предупреждения о org.jetbrains:annotations, обновите pom.xml, указав версию:<dependency>
@@ -139,8 +137,6 @@ expiration: 86400000 # 24 часа
 <artifactId>annotations</artifactId>
 <version>24.0.1</version>
 </dependency>
-
-
 
 
 Приложение не подключается к базе данных:
@@ -151,39 +147,8 @@ expiration: 86400000 # 24 часа
 Проверьте настройки spring.datasource в application.yml. Обратите внимание, что для Docker используется jdbc:postgresql://db:5432/bankdb, а для локального запуска — jdbc:postgresql://localhost:5432/bankdb.
 
 
-
-Дополнительные рекомендации
-
-Отключение spring.jpa.open-in-view (рекомендуется для продакшена):Добавьте в application.yml:
-spring:
-jpa:
-open-in-view: false
-
-
-Включение логирования SQL (для отладки):SQL-запросы Hibernate уже включены в application.yml:
-spring:
-jpa:
-show-sql: true
-
-Для более подробного логирования добавьте:
-spring:
-jpa:
-properties:
-hibernate.format_sql: true
-logging:
-level:
-org.hibernate.SQL: DEBUG
-org.hibernate.type.descriptor.sql.BasicBinder: TRACE
-
-
 Миграции Liquibase:Схема базы данных и начальные данные управляются Liquibase через changelog-master.yml в src/main/resources/db/migration/.
 
 Шифрование:Приложение использует ключ шифрования, указанный в application.yml:
 encryption:
 key: Kj8pLm9nQ2vX4yZ8aB5cD6eF7gH9iJ0k
-
-Убедитесь, что ключ безопасно хранится в продакшене.
-
-
-Для дополнительной помощи проверяйте логи с помощью docker logs или обращайтесь к разработчику проекта.
-</xaiArtifact
