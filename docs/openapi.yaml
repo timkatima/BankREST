@@ -1,1 +1,451 @@
-# Здесь будет OpenAPI описание всех доступных эндпоинтов и моделей данных.
+openapi: 3.0.3
+info:
+  title: Bank Card Management API
+  version: 1.0.0
+  description: |
+    Полная документация REST API для управления банковскими картами, пользователями и авторизацией JWT.
+    Роли:
+      - USER: базовые операции с картами (просмотр, перевод, запрос блокировки);
+      - ADMIN: управление пользователями и всеми картами.
+
+servers:
+  - url: http://localhost:8081
+
+paths:
+  /api/auth/register:
+    post:
+      summary: Регистрация нового пользователя
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRegisterDTO'
+      responses:
+        '200':
+          description: JWT токен
+          content:
+            application/json:
+              schema:
+                type: string
+
+  /api/auth/login:
+    post:
+      summary: Аутентификация пользователя
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserLoginDTO'
+            example:
+              username: admin_user
+              password: passwordAdmin
+      responses:
+        '200':
+          description: JWT токен
+          content:
+            application/json:
+              schema:
+                type: string
+
+  /api/cards/search:
+    get:
+      summary: Поиск активных карт текущего пользователя
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+        - in: query
+          name: size
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Найденные карты
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CardDTO'
+      security:
+        - bearerAuth: []
+
+  /api/admin/users:
+    get:
+      summary: Получение списка пользователей (с фильтрацией по username)
+      parameters:
+        - in: query
+          name: username
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: page
+          schema:
+            type: integer
+        - in: query
+          name: size
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Список пользователей
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserDTO'
+      security:
+        - bearerAuth: [ ]
+
+    post:
+      summary: Создание нового пользователя (админ)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRegisterDTO'
+      responses:
+        '200':
+          description: Пользователь создан
+          content:
+            application/json:
+              schema:
+                type: string
+      security:
+        - bearerAuth: [ ]
+
+
+
+
+  /api/admin/users/{userId}:
+    delete:
+      summary: Удаление пользователя по ID (админ)
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Пользователь удалён
+      security:
+        - bearerAuth: []
+
+  /api/admin/users/{userId}/role:
+    put:
+      summary: Обновление роли пользователя (админ)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RoleUpdateDTO'
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Роль обновлена
+          content:
+            application/json:
+              schema:
+                type: string
+      security:
+        - bearerAuth: []
+
+
+
+  /api/user/cards:
+    get:
+      summary: Получение карт текущего пользователя
+      parameters:
+        - in: query
+          name: search
+          schema:
+            type: string
+        - in: query
+          name: page
+          schema:
+            type: integer
+        - in: query
+          name: size
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Список карт
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CardDTO'
+      security:
+        - bearerAuth: []
+
+  /api/user/transfer:
+    post:
+      summary: Перевод между картами пользователя
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransferRequestDTO'
+      responses:
+        '200':
+          description: Успешный перевод
+      security:
+        - bearerAuth: []
+
+  /api/cards/{cardId}/block:
+    post:
+      summary: Запрос на блокировку карты (пользователь)
+      parameters:
+        - in: path
+          name: cardId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Карта заблокирована
+      security:
+        - bearerAuth: []
+
+  /api/cards/{cardId}/balance:
+    get:
+      summary: Получение баланса карты
+      parameters:
+        - in: path
+          name: cardId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Баланс карты
+          content:
+            application/json:
+              schema:
+                type: number
+      security:
+        - bearerAuth: []
+
+  /api/admin/cards:
+    get:
+      summary: Получение всех карт (админ)
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+        - in: query
+          name: size
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Список всех карт
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CardDTO'
+      security:
+        - bearerAuth: []
+    post:
+      summary: Создание новой карты (админ)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CardCreateDTO'
+            example:
+              ownerUsername: regular_user
+              expiryDate: 2028-07-12
+              initialBalance: 1000
+      responses:
+        '200':
+          description: Карта создана
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CardDTO'
+      security:
+        - bearerAuth: []
+
+  /api/admin/cards/{cardId}/activate:
+    put:
+      summary: Активация карты (админ)
+      parameters:
+        - in: path
+          name: cardId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Карта активирована
+      security:
+        - bearerAuth: []
+
+  /api/admin/cards/{cardId}/block:
+    put:
+      summary: Блокировка карты (админ)
+      parameters:
+        - in: path
+          name: cardId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Карта заблокирована
+      security:
+        - bearerAuth: []
+
+
+
+  /api/admin/users/{userId}/password:
+    put:
+      summary: Обновление пароля пользователя (админ)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasswordUpdateDTO'
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Пароль обновлён
+          content:
+            application/json:
+              schema:
+                type: string
+      security:
+        - bearerAuth: []
+
+
+  /api/admin/cards/{cardId}:
+    delete:
+      summary: Удаление карты (админ)
+      parameters:
+        - in: path
+          name: cardId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Карта удалена
+      security:
+        - bearerAuth: []
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    CardCreateDTO:
+      type: object
+      properties:
+        ownerUsername:
+          type: string
+        expiryDate:
+          type: string
+          format: date
+        initialBalance:
+          type: number
+
+    CardDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+        maskedCardNumber:
+          type: string
+        ownerUsername:
+          type: string
+        expiryDate:
+          type: string
+          format: date
+        status:
+          type: string
+          enum: [ACTIVE, BLOCKED, EXPIRED]
+        balance:
+          type: number
+
+    TransferRequestDTO:
+      type: object
+      properties:
+        fromCardId:
+          type: integer
+        toCardId:
+          type: integer
+        amount:
+          type: number
+
+    RoleUpdateDTO:
+        type: object
+        properties:
+          role:
+            type: string
+            enum: [ USER, ADMIN ]
+
+    UserDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        role:
+          type: string
+        cards:
+          type: array
+          items:
+            $ref: '#/components/schemas/CardDTO'
+    UserRegisterDTO:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+
+    UserLoginDTO:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+    PasswordUpdateDTO:
+      type: object
+      properties:
+        password:
+          type: string
+
+

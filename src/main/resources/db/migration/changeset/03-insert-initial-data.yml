@@ -1,0 +1,93 @@
+databaseChangeLog:
+  - changeSet:
+      id: 03-insert-initial-data
+      author: author
+      changes:
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  valueNumeric: 1
+              - column:
+                  name: username
+                  value: admin_user
+              - column:
+                  name: password
+                  value: $2a$10$AmB1mz9kZMS8Bs8fEKlkzOpaEF0wk4k8MDOT2Y34NS8EofigLFeVy
+              - column:
+                  name: role
+                  value: ADMIN
+
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  valueNumeric: 2
+              - column:
+                  name: username
+                  value: regular_user
+              - column:
+                  name: password
+                  value: $2a$10$nAdjaEF2icNa.hKeNgX43OyomeFfywAEJ7dKxeVZENEn3OjDSQVFa
+              - column:
+                  name: role
+                  value: USER
+
+        - insert:
+            tableName: cards
+            columns:
+              - column:
+                  name: card_number
+                  value: K8bPj8plwiu/pooNdffEwfta5gWLvXXsu/C82e1pxYO/oM4R3ir0w9cQpthbC4yZ
+              - column:
+                  name: owner_id
+                  valueNumeric: 1
+              - column:
+                  name: expiry_date
+                  valueDate: 2026-12-31
+              - column:
+                  name: status
+                  value: ACTIVE
+              - column:
+                  name: balance
+                  valueNumeric: 1000.00
+
+        - insert:
+            tableName: cards
+            columns:
+              - column:
+                  name: card_number
+                  value: WrEcF3pS3B6snXTtkrMXIE0SqfCMysdTeGtzPfwY/Yci4vsXUipEW33Ro09r9EEW
+              - column:
+                  name: owner_id
+                  valueNumeric: 2
+              - column:
+                  name: expiry_date
+                  valueDate: 2026-12-31
+              - column:
+                  name: status
+                  value: BLOCKED
+              - column:
+                  name: balance
+                  valueNumeric: 500.00
+
+        - insert:
+            tableName: cards
+            columns:
+              - column:
+                  name: card_number
+                  value: LTjvQNXfTwmkMDYKLzOb7efwZXTiy2f8S5MW2etrnSpBhrn8e6U778mps7lOnSii
+              - column:
+                  name: owner_id
+                  valueNumeric: 2
+              - column:
+                  name: expiry_date
+                  valueDate: 2025-06-01
+              - column:
+                  name: status
+                  value: EXPIRED
+              - column:
+                  name: balance
+                  valueNumeric: 200.00

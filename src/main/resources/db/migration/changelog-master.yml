@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - include:
+      file: db/migration/changeset/01-create-users-table.yml
+  - include:
+      file: db/migration/changeset/02-create-cards-table.yml
+  - include:
+      file: db/migration/changeset/03-insert-initial-data.yml
